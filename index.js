@@ -157,29 +157,34 @@ if (uploads.buletinUrl) {
   await reviewChannel.send({ embeds: [embed] });
 }
 
-async function createPrivateThreadForUser(applicationChannel, user) {
-  // Create a private thread and add the user
- const displayName = interaction.member?.displayName || interaction.user.username;
+async function createPrivateThreadForUser(applicationChannel, user, displayName) {
+  const safeName = (displayName || user.username)
+    .replace(/[^\p{L}\p{N}\s._-]/gu, "")
+    .trim()
+    .slice(0, 40);
 
-const thread = await reviewChannel.threads.create({
-  name: `Poza Buletin - ${displayName}`,
-  autoArchiveDuration: 1440,
-  type: ChannelType.PrivateThread,
-});
+  const threadName = `Poza Buletin - ${safeName}`;
 
+  const thread = await applicationChannel.threads.create({
+    name: threadName,
+    autoArchiveDuration: 1440, // 24h
+    type: 12, // PrivateThread
+    reason: "CV Upload Thread",
+  });
 
   await thread.members.add(user.id);
 
   await thread.send(
     [
-      "📸 **Încarcă aici, te rog, o poza cu buletinul tau**",
+      "📸 **Încarcă aici, te rog, o poză cu buletinul (față):**",
       "",
-      "După ce poza este incarcata, CV-ul tau se trimite automat către noi.",
+      "După ce poza este încărcată, CV-ul tău se trimite automat către noi.",
     ].join("\n")
   );
 
   return thread;
 }
+
 
 async function registerCommands() {
   const commands = [
