@@ -292,7 +292,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       applications.set(interaction.user.id, state);
 
       return interaction.reply({
-        content: `✅ Pagina 2 a fost salvată. Am creat un thread privat pentru poze: <#${thread.id}>`,
+        content: `✅ Pagina 2 a fost salvată. Acum te rog sa faci o poza la buletinul tau si sa o incarci aici: <#${thread.id}>`,
         ephemeral: true,
       });
     }
@@ -333,7 +333,7 @@ for (const att of attachments) {
 
     // Notify user progress in thread (no spam elsewhere)
     if (state.uploads.buletinUrl) {
-      await message.channel.send("✅ Am primit ambele poze. Trimit aplicația către staff în #Documente...");
+      await message.channel.send("✅ Am primit poza. Cv-ul tau a fost depus cu succes");
       // Post to review channel
       const threadUrl = `https://discord.com/channels/${message.guildId}/${state.threadId}`;
       await postToReviewChannel({
