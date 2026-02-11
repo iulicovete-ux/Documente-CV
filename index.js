@@ -338,7 +338,7 @@ client.on(Events.MessageCreate, async (message) => {
 
     applications.set(message.author.id, state);
 
-    await message.channel.send("✅ Poză primită. Trimit aplicația către staff în #Documente...");
+    await message.channel.send("✅ Poză primită. CV-ul tau a fost trimis mai departe si urmeaza sa fii contactat pentru instructaj");
 
     const threadUrl = `https://discord.com/channels/${message.guildId}/${state.threadId}`;
 
