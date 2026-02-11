@@ -159,14 +159,14 @@ if (uploads.buletinUrl) {
 
 async function createPrivateThreadForUser(applicationChannel, user) {
   // Create a private thread and add the user
-  const threadName = `cv-${user.username}-${String(Date.now()).slice(-4)}`.toLowerCase();
+ const displayName = interaction.member?.displayName || interaction.user.username;
 
-  const thread = await applicationChannel.threads.create({
-    name: threadName,
-    autoArchiveDuration: 1440, // 24h
-    type: 12, // ChannelType.PrivateThread (numeric avoids import)
-    reason: "CV Upload Thread",
-  });
+const thread = await reviewChannel.threads.create({
+  name: `Poza Buletin - ${displayName}`,
+  autoArchiveDuration: 1440,
+  type: ChannelType.PrivateThread,
+});
+
 
   await thread.members.add(user.id);
 
