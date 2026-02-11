@@ -315,54 +315,51 @@ client.on(Events.MessageCreate, async (message) => {
 
     const state = applications.get(message.author.id);
     if (!state?.threadId) return;
+
+    // Ensure we're inside the correct thread
     if (message.channel.id !== state.threadId) return;
 
-    // Collect attachment URLs (images)
+    // If message is partial (rare), fetch it
+    if (message.partial) {
+      message = await message.fetch();
+    }
+
+    // Read attachments
     const attachments = Array.from(message.attachments.values());
-    if (attachments.length === 0) return;
+    if (attachments.length === 0) {
+      // Optional: tell them what to do
+      // await message.channel.send("⏳ Te rog încarcă o poză (atașament).");
+      return;
+    }
 
-    // Save only ONE image (buletin)
-for (const att of attachments) {
-  const url = att.url;
-  if (!state.uploads.buletinUrl) {
-    state.uploads.buletinUrl = url;
-    break; // stop after first image
-  }
-}
-
+    // Take first attachment as the required image
+    const imgUrl = attachments[0].url;
+    state.uploads.buletinUrl = imgUrl;
 
     applications.set(message.author.id, state);
 
-    // Notify user progress in thread (no spam elsewhere)
-    if (state.uploads.buletinUrl) {
-      await message.channel.send("✅ Am primit poza. Cv-ul tau a fost depus cu succes");
-      // Post to review channel
-      const threadUrl = `https://discord.com/channels/${message.guildId}/${state.threadId}`;
-      await postToReviewChannel({
-        applicantTag: message.author.tag,
-        applicantId: message.author.id,
-        displayName: message.member?.displayName || message.author.username,
-        page1: state.page1,
-        page2: state.page2,
-        uploads: state.uploads,
-        threadUrl,
-      });
+    await message.channel.send("✅ Poză primită. Trimit aplicația către staff în #Documente...");
 
-      // Archive + lock thread
-      try {
-        await message.channel.setLocked(true);
-        await message.channel.setArchived(true);
-      } catch {}
+    const threadUrl = `https://discord.com/channels/${message.guildId}/${state.threadId}`;
 
-      // Clear state
-      applications.delete(message.author.id);
-    } else {
-      const status = [
-        state.uploads.buletinUrl ? "✅ Buletin primit" : "⏳ Aștept buletin (față)",
-        state.uploads.idUrl ? "✅ Poză ID in-game primită" : "⏳ Aștept poză ID in-game + față",
-      ].join("\n");
-      await message.channel.send(status);
-    }
+    await postToReviewChannel({
+      applicantTag: message.author.tag,
+      applicantId: message.author.id,
+      displayName: message.member?.displayName || message.author.username,
+      page1: state.page1,
+      page2: state.page2,
+      uploads: state.uploads,
+      threadUrl,
+    });
+
+    // Lock + archive thread
+    try {
+      await message.channel.setLocked(true);
+      await message.channel.setArchived(true);
+    } catch {}
+
+    // Clear state
+    applications.delete(message.author.id);
   } catch (err) {
     console.error("❌ MessageCreate error:", err);
   }
