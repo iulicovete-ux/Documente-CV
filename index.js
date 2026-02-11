@@ -22,10 +22,12 @@ console.log("✅ BOT VERSION: CV Application v1");
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages, // for listening to uploads in threads
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent, // ✅ important reliability
   ],
-  partials: [Partials.Channel],
+  partials: [Partials.Channel, Partials.Message],
 });
+
 
 // In-memory state (ok for your use-case; resets if bot restarts)
 const applications = new Map(); // userId -> { page1, page2, threadId, uploads: { buletinUrl, idUrl } }
