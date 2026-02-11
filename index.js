@@ -146,12 +146,12 @@ async function postToReviewChannel({ applicantTag, applicantId, displayName, pag
       { name: "Cine te-a adus?", value: page1.cine_te_a_adus || "—", inline: false },
       { name: "De ce vrei să te alături echipei noastre?", value: page2.motiv || "—", inline: false },
       { name: "Experiență anterioară", value: page2.experienta || "—", inline: false },
-      { name: "Poză buletin (față)", value: uploads.buletinUrl ? uploads.buletinUrl : "❌ Nu a fost încărcată", inline: false },
-      { name: "Poză ID in-game + față", value: uploads.idUrl ? uploads.idUrl : "❌ Nu a fost încărcată", inline: false },
-      { name: "Thread upload", value: threadUrl || "—", inline: false }
+      { name: "Poză buletin + față", value: uploads.buletinUrl ? uploads.buletinUrl : "❌ Nu a fost încărcată", inline: false },
     )
     .setTimestamp(new Date());
-
+if (uploads.buletinUrl) {
+  embed.setImage(uploads.buletinUrl);
+}
   await reviewChannel.send({ embeds: [embed] });
 }
 
