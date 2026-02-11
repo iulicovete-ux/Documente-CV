@@ -138,7 +138,6 @@ async function postToReviewChannel({ applicantTag, applicantId, displayName, pag
 
   const embed = new EmbedBuilder()
     .setTitle("📄 CV Nou Depus")
-    .setDescription(`**Aplicant:** \`${displayName}\` (${applicantTag})\n**User ID:** \`${applicantId}\``)
     .addFields(
       { name: "Nume + Prenume", value: page1.nume_prenume || "—", inline: false },
       { name: "IBAN", value: page1.iban || "—", inline: false },
