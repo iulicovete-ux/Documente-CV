@@ -170,11 +170,9 @@ async function createPrivateThreadForUser(applicationChannel, user) {
 
   await thread.send(
     [
-      "📸 **Încarcă aici, te rog, două poze (în două mesaje separate sau în același mesaj):**",
-      "1) **Poză buletin (față)**",
-      "2) **Poză cu ID in-game + fața personajului**",
+      "📸 **Încarcă aici, te rog, o poza cu buletinul tau**",
       "",
-      "După ce sunt încărcate ambele, aplicația se trimite automat către staff în #Documente.",
+      "După ce poza este incarcata, CV-ul tau se trimite automat către noi.",
     ].join("\n")
   );
 
@@ -321,20 +319,20 @@ client.on(Events.MessageCreate, async (message) => {
     const attachments = Array.from(message.attachments.values());
     if (attachments.length === 0) return;
 
-    // Put first attachment as buletin if missing, second as id if missing
-    for (const att of attachments) {
-      const url = att.url;
-      if (!state.uploads.buletinUrl) {
-        state.uploads.buletinUrl = url;
-      } else if (!state.uploads.idUrl) {
-        state.uploads.idUrl = url;
-      }
-    }
+    // Save only ONE image (buletin)
+for (const att of attachments) {
+  const url = att.url;
+  if (!state.uploads.buletinUrl) {
+    state.uploads.buletinUrl = url;
+    break; // stop after first image
+  }
+}
+
 
     applications.set(message.author.id, state);
 
     // Notify user progress in thread (no spam elsewhere)
-    if (state.uploads.buletinUrl && state.uploads.idUrl) {
+    if (state.uploads.buletinUrl) {
       await message.channel.send("✅ Am primit ambele poze. Trimit aplicația către staff în #Documente...");
       // Post to review channel
       const threadUrl = `https://discord.com/channels/${message.guildId}/${state.threadId}`;
